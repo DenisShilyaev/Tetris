@@ -22,37 +22,168 @@ for (let y = 18; y > 0; y--) {
 	}	
 }
 
-let x = 5, y = 10; //Задаем начальные координаты отрисовки фигуры
+let x = 5, y = 15; //Задаем начальные координаты отрисовки фигуры
 let mainArr = [
 	//Палка
 	[
 		[0, 1],
 		[0, 2],
 		[0, 3]
-	]
+	],
+
 	//Квадрат
+	[
 		[1, 0],
 		[0, 1],
 		[1, 1]
+	],
+
+	//Фигура L
+	[
+		[1, 0],
+		[0, 1],
+		[0, 2]
+	],
+
+	//Зеркальная фигура L
+	[
+		[1, 0],
+		[1, 1],
+		[1, 2]
+	],
+
+	//Молния правая
+	[
+		[1, 0],
+		[-1, 1],
+		[0, 1]
+	],
+
+	//Молния левая
+	[
+		[1, 0],
+		[1, 1],
+		[2, 1]
+	],
+
+	//Деталь "танк"
+	[
+		[1, 0],
+		[2, 0],
+		[1, 1]
+	],
 ]
 
 let currentFigure = 0;
 let figureBody = 0;
 
-function create () {
-	function getRandom () {
+function create () { 
+	function getRandom () {//Для случайного определения типа новой фигуры
 		return Math.round(Math.random()*(mainArr.length-1))
 	}
 
-	currentFigure = getRandom;
+	currentFigure = getRandom();
 
-	figureBody = [
+	figureBody = [ //Массив, в котором определяются координаты новой фигуры
 		document.querySelector(`[posX = "${x}"][posY = "${y}"]`),
-		document.querySelector(`[posX = "${x + mainArr[currentFigure][0][0]}"][posY = "${y + mainArr[currentFigure][0][1]}"]`)
-		document.querySelector(`[posX = "${x + mainArr[currentFigure][1][0]}"][posY = "${y + mainArr[currentFigure][1][1]}"]`)
+		document.querySelector(`[posX = "${x + mainArr[currentFigure][0][0]}"][posY = "${y + mainArr[currentFigure][0][1]}"]`),
+		document.querySelector(`[posX = "${x + mainArr[currentFigure][1][0]}"][posY = "${y + mainArr[currentFigure][1][1]}"]`),
 		document.querySelector(`[posX = "${x + mainArr[currentFigure][2][0]}"][posY = "${y + mainArr[currentFigure][2][1]}"]`)
-	
-	
 	]
 	
+	for (let i = 0; i < figureBody.length; i++){//Присваиваем новой фигуре класс "figure"
+		figureBody[i].classList.add('figure');
+	}
 }
+
+create();
+
+function move() {//Описваем движение фигуры
+	let moveFlag = true;//Если true то фигура двигается вниз иначе фигура останавливается и создается новая фигура 
+	let coordinates = [//Заволняем массив координатами фигуры
+		[figureBody[0].getAttribute('posX'), figureBody[0].getAttribute('posY')],
+		[figureBody[1].getAttribute('posX'), figureBody[1].getAttribute('posY')],
+		[figureBody[2].getAttribute('posX'), figureBody[2].getAttribute('posY')],
+		[figureBody[3].getAttribute('posX'), figureBody[3].getAttribute('posY')],
+	];
+
+	for (let i = 0; i < coordinates.length; i++) {//Фигура останавливается если фигура достигает низа поля или фигура сталкивается с другой фигурой
+		if (coordinates[i][1] == 1 || document.querySelector(`[posX = "${coordinates[i][0]}"][posY = "${coordinates[i][1]-1}"]`).classList.contains('set')) {
+			moveFlag = false;
+			break;
+		}
+	}
+
+	if (moveFlag) {//Если true то фигура двигается вниз иначе фигура останавливается и создается новая фигура
+		for (let i = 0; i < figureBody.length; i++) {//Делаем фигуру невидимой
+			figureBody[i].classList.remove('figure')
+		}
+		figureBody = [//Двигаем фигуру вниз на 1
+			document.querySelector(`[posX = "${coordinates[0][0]}"][posY = "${coordinates[0][1]-1}"]`),
+			document.querySelector(`[posX = "${coordinates[1][0]}"][posY = "${coordinates[1][1]-1}"]`),
+			document.querySelector(`[posX = "${coordinates[2][0]}"][posY = "${coordinates[2][1]-1}"]`),
+			document.querySelector(`[posX = "${coordinates[3][0]}"][posY = "${coordinates[3][1]-1}"]`)
+		];
+		for (let i = 0; i < figureBody.length; i++) {//Делаем её снова видимой
+			figureBody[i].classList.add('figure');
+		}
+	} else {
+		for (let i = 0; i < figureBody.length; i++) {//Присваиваем фигуре класс "set"
+			figureBody[i].classList.remove('figure');
+			figureBody[i].classList.add('set');
+		}
+		create();
+	}
+}
+
+let interval = setInterval(() => {
+	move();
+}, 300);
+
+let flag = true
+
+window.addEventListener('keydown', function (e) {
+
+	let coordinates1 = [figureBody[0].getAttribute('posX'), figureBody[0].getAttribute('posY')];
+	let coordinates2 = [figureBody[1].getAttribute('posX'), figureBody[1].getAttribute('posY')];
+	let coordinates3 = [figureBody[2].getAttribute('posX'), figureBody[2].getAttribute('posY')];
+	let coordinates4 = [figureBody[3].getAttribute('posX'), figureBody[3].getAttribute('posY')];
+
+	function getNewState (a) {
+
+		flag = true;
+
+		let figureNew = [
+		document.querySelector(`[posX = "${+coordinates1[0] + a}"][posY = "${coordinates1[0]}"]`),
+		document.querySelector(`[posX = "${+coordinates1[1] + a}"][posY = "${coordinates1[1]}"]`),
+		document.querySelector(`[posX = "${+coordinates1[2] + a}"][posY = "${coordinates1[2]}"]`),
+		document.querySelector(`[posX = "${+coordinates1[3] + a}"][posY = "${coordinates1[3]}"]`),
+		];
+
+		for (let i = 0; i < figureNew.length; i++) {
+			if (!figureNew[i] || figureNew[i].classList.contains('set')) {
+				flag = false;
+			}
+		}
+
+		if (flag == true) {
+			for (let i = 0; i < figureBody.length; i++) {//Удаляем у фигуры класс "figure"
+			figureBody[i].classList.remove('figure');
+			}
+
+		figureBody = figureNew; //Присваиваем фигуре новые координаты
+
+			for (let i = 0; i < figureBody.length; i++) {//Добавляем фигуре класс "figure"
+			figureBody[i].classList.add('figure');
+			}
+		}
+	}
+	if (e.keyCode == 37){
+		getNewState (-1);
+	} else if (e.keyCode == 39) {
+		getNewState (1);
+	} else if (e.keyCode == 40){
+		move();
+	}
+})
+
