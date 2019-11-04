@@ -331,6 +331,36 @@ function move() {//Описваем движение фигуры
 			figureBody[i].classList.remove('figure');
 			figureBody[i].classList.add('set');
 		}
+		//Ниже находим полностю заполненные строки, удаляем их и опускаем остальные элементы на стрку ниже
+		for (let i =  1; i < 15; i++) {
+			let count = 0;
+			for (let k = 1; k < 11; k++){
+				if (document.querySelector(`[posX = "${k}"][posY = "${i}"]`).classList.contains('set')){
+					count++;
+					if (count == 10){
+						for (let m = 1; m < 11; m++) {
+						document.querySelector(`[posX = "${m}"][posY = "${i}"]`).classList.remove('set')
+						}
+						let set = document.querySelectorAll('.set');
+						let newSet = [];
+						for (let s = 0; s < set.length; s++) {
+							let setCoordinates = [set[s].getAttribute('posX'), set[s].getAttribute('posY')];
+							if (setCoordinates[1] > i){
+								set[s].classList.remove('set');
+								newSet.push(document.querySelector(`[posX = "${setCoordinates[0]}"][posY = "${setCoordinates[1]-1}"]`))
+							}
+						}
+						for (let a = 0; a < newSet.length; a++) {
+							newSet[a].classList.add('set');
+						}
+						i--;
+					}
+				}
+			}
+		}
+		for (let n = 0; n < 11; n++) {
+			if (document.querySelector(`[posX = "${n}"][posY = "15"]`))
+		}
 		create();
 	}
 }
