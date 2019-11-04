@@ -158,9 +158,9 @@ let mainArr = [
 		//поворот на 360 градусов
 		[
 			[-2, 0],
+			[1, -1],
 			[0, 0],
-			[1, -1],
-			[1, -1],
+			[-1, 1],
 		],
 	],
 
@@ -171,31 +171,31 @@ let mainArr = [
 		[0, 1],
 		//поворот на 90 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[0, -1],
+			[-1, 0],
+			[2, -1],
+			[1, 0],
 		],
 		//поворот на 180 градусов
 		[
 			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[1, -1],
+			[-2, 0],
+			[-1, -1],
 		],
 		//поворот на 270 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[0, -1],
+			[-1, 0],
+			[2, -1],
+			[1, 0],
 		],
 		//поворот на 360 градусов
 		[
 			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[1, -1],
+			[-2, 0],
+			[-1, -1],
 		],
 	],
 
@@ -206,31 +206,31 @@ let mainArr = [
 		[2, 1],
 		//поворот на 90 градусов
 		[
+			[2, -1],
 			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[1, -1],
+			[-1, 0],
 		],
 		//поворот на 180 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[-2, 0],
+			[0, -1],
+			[-1, 0],
+			[1, -1],
 		],
 		//поворот на 270 градусов
 		[
+			[2, -1],
 			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[1, -1],
+			[-1, 0],
 		],
 		//поворот на 360 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[-2, 0],
+			[0, -1],
+			[-1, 0],
+			[1, -1],
 		],
 	],
 
@@ -241,7 +241,7 @@ let mainArr = [
 		[1, 1],
 		//поворот на 90 градусов
 		[
-			[0, 0],
+			[1, -1],
 			[0, 0],
 			[0, 0],
 			[0, 0],
@@ -249,34 +249,37 @@ let mainArr = [
 		//поворот на 180 градусов
 		[
 			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[-1, 0],
+			[-1, 0],
+			[1, -1],
 		],
 		//поворот на 270 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[1, -1],
+			[1, -1],
+			[1, -1],
 			[0, 0],
 		],
 		//поворот на 360 градусов
 		[
-			[0, 0],
-			[0, 0],
-			[0, 0],
-			[0, 0],
+			[-2, 0],
+			[0, -1],
+			[0, -1],
+			[-1, -1],
 		],
 	],
 ]
 
 let currentFigure = 0;
 let figureBody = 0;
+let rotate = 1;
 
 function create () { 
 	function getRandom () {//Для случайного определения типа новой фигуры
 		return Math.round(Math.random()*(mainArr.length-1))
 	}
+
+	rotate = 1;
 
 	currentFigure = getRandom();
 
@@ -380,6 +383,40 @@ window.addEventListener('keydown', function (e) {
 		getNewState (1);
 	} else if (e.keyCode == 40){
 		move();
+	} else if (e.keyCode == 38){
+
+		flag = true;
+
+		let figureNew = [
+		document.querySelector(`[posX = "${+coordinates1[0] + mainArr[currentFigure][rotate + 2][0][0]}"][posY = "${+coordinates1[1] + mainArr[currentFigure][rotate + 2][0][1]}"]`),
+		document.querySelector(`[posX = "${+coordinates2[0] + mainArr[currentFigure][rotate + 2][1][0]}"][posY = "${+coordinates2[1] + mainArr[currentFigure][rotate + 2][1][1]}"]`),
+		document.querySelector(`[posX = "${+coordinates3[0] + mainArr[currentFigure][rotate + 2][2][0]}"][posY = "${+coordinates3[1] + mainArr[currentFigure][rotate + 2][2][1]}"]`),
+		document.querySelector(`[posX = "${+coordinates4[0] + mainArr[currentFigure][rotate + 2][3][0]}"][posY = "${+coordinates4[1] + mainArr[currentFigure][rotate + 2][3][1]}"]`),
+		];
+
+		for (let i = 0; i < figureNew.length; i++) {
+			if (!figureNew[i] || figureNew[i].classList.contains('set')) {
+				flag = false;
+			}
+		}
+
+		if (flag == true) {
+			for (let i = 0; i < figureBody.length; i++) {//Удаляем у фигуры класс "figure"
+			figureBody[i].classList.remove('figure');
+			}
+
+			figureBody = figureNew; //Присваиваем фигуре новые координаты
+
+			for (let i = 0; i < figureBody.length; i++) {//Добавляем фигуре класс "figure"
+			figureBody[i].classList.add('figure');
+			}
+
+			if (rotate < 4){
+				rotate++;
+			} else {
+				rotate = 1;
+			}
+		}
 	}
 })
 
