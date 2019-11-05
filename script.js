@@ -297,6 +297,10 @@ function create () {
 
 create();
 
+let score = 0;
+let input = document.getElementsByTagName('input')[0];
+input.value = `Ваши очки: ${score}`;
+
 function move() {//Описваем движение фигуры
 	let moveFlag = true;//Если true то фигура двигается вниз иначе фигура останавливается и создается новая фигура 
 	let coordinates = [//Заволняем массив координатами фигуры
@@ -338,6 +342,8 @@ function move() {//Описваем движение фигуры
 				if (document.querySelector(`[posX = "${k}"][posY = "${i}"]`).classList.contains('set')){
 					count++;
 					if (count == 10){
+						score += 10;
+						input.value = `Ваши очки: ${score}`;
 						for (let m = 1; m < 11; m++) {
 						document.querySelector(`[posX = "${m}"][posY = "${i}"]`).classList.remove('set')
 						}
@@ -358,8 +364,11 @@ function move() {//Описваем движение фигуры
 				}
 			}
 		}
-		for (let n = 0; n < 11; n++) {
-			if (document.querySelector(`[posX = "${n}"][posY = "15"]`))
+		for (let n = 1; n < 11; n++) {
+			if (document.querySelector(`[posX = "${n}"][posY = "15"]`).classList.contains('set')) {
+				clearInterval(interval);
+				alert(`Игра окончена. Ваши очки: ${score}`);
+			}
 		}
 		create();
 	}
@@ -449,4 +458,3 @@ window.addEventListener('keydown', function (e) {
 		}
 	}
 })
-
