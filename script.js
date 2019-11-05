@@ -1,3 +1,26 @@
+let overlay = document.querySelector('.overlay');
+let modal = document.querySelector('.modal');
+let speed = 0;
+
+modal.addEventListener('click', function (e) {
+	if (e.target.classList.contains('easy')) {
+		speed = 900;
+	} else if (e.target.classList.contains('normal')) {
+		speed = 600;
+	} else if (e.target.classList.contains('hard')) {
+		speed = 300;
+	}
+
+	if (e.target.classList.contains('button')) {
+		modal.style.display = 'none';
+		overlay.style.display = 'none';
+		startGame();
+	}
+})
+
+function startGame() {
+
+
 let tetris = document.createElement('div'); //Созаем div, который будет являтся игровым полем
 tetris.classList.add('tetris'); //Присваиваем данному div класс 'tetris'
 
@@ -376,7 +399,7 @@ function move() {//Описваем движение фигуры
 
 let interval = setInterval(() => {
 	move();
-}, 300);
+}, speed);
 
 let flag = true
 
@@ -458,3 +481,5 @@ window.addEventListener('keydown', function (e) {
 		}
 	}
 })
+
+}
