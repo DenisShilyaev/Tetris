@@ -1,8 +1,8 @@
 let overlay = document.querySelector('.overlay');
 let modal = document.querySelector('.modal');
-let speed = 0;
+let speed = 0;//Скорость падения фигуры
 
-modal.addEventListener('click', function (e) {
+modal.addEventListener('click', function (e) {//Настраиваем уровни сложности
 	if (e.target.classList.contains('easy')) {
 		speed = 900;
 	} else if (e.target.classList.contains('normal')) {
@@ -11,7 +11,7 @@ modal.addEventListener('click', function (e) {
 		speed = 300;
 	}
 
-	if (e.target.classList.contains('button')) {
+	if (e.target.classList.contains('button')) {//Делаем меню невидимым и начинаем игру после нажатия на любую кнопку в меню
 		modal.style.display = 'none';
 		overlay.style.display = 'none';
 		startGame();
@@ -36,7 +36,7 @@ main.appendChild(tetris); // добавляем 'tetris' в родительск
 let excel = document.getElementsByClassName('excel'); //Заносим все ячейки в массив 'excel' 
 let i = 0; //создаем переменную, которая будет являтся счетчиком ячеек массива excel
 
-//В цикле ниже перебираем все ячейки в массиве и присваиваем каждой ячейке уникалные координаты
+//В цикле ниже перебираем все ячейки в массиве и присваиваем каждой ячейке уникалные координаты (X, Y)
 for (let y = 18; y > 0; y--) {
 	for (let x = 1; x < 11; x++) {
 		excel[i].setAttribute('posX', x); 
@@ -293,9 +293,9 @@ let mainArr = [
 	],
 ]
 
-let currentFigure = 0;
-let figureBody = 0;
-let rotate = 1;
+let currentFigure = 0;//Определяет, какая фигура выбрана в текущий омент времени
+let figureBody = [];//Тело текущей фигуры
+let rotate = 1;//Определяет угол поворота фигуры
 
 function create () { 
 	function getRandom () {//Для случайного определения типа новой фигуры
@@ -313,19 +313,19 @@ function create () {
 		document.querySelector(`[posX = "${x + mainArr[currentFigure][2][0]}"][posY = "${y + mainArr[currentFigure][2][1]}"]`)
 	]
 	
-	for (let i = 0; i < figureBody.length; i++){//Присваиваем новой фигуре класс "figure"
+	for (let i = 0; i < figureBody.length; i++){//Присваиваем новой фигуре класс "figure", тем самым делая её видимой
 		figureBody[i].classList.add('figure');
 	}
 }
 
 create();
 
-let score = 0;
+let score = 0;//Хранит количество набранных очков
 let input = document.getElementsByTagName('input')[0];
 input.value = `Ваши очки: ${score}`;
 
 function move() {//Описваем движение фигуры
-	let moveFlag = true;//Если true то фигура двигается вниз иначе фигура останавливается и создается новая фигура 
+	let moveFlag = true;//Если true то фигура двигается вниз иначе фигура останавливается, меняет класс и создается новая фигура 
 	let coordinates = [//Заволняем массив координатами фигуры
 		[figureBody[0].getAttribute('posX'), figureBody[0].getAttribute('posY')],
 		[figureBody[1].getAttribute('posX'), figureBody[1].getAttribute('posY')],
@@ -387,7 +387,7 @@ function move() {//Описваем движение фигуры
 				}
 			}
 		}
-		for (let n = 1; n < 11; n++) {
+		for (let n = 1; n < 11; n++) {//Конец игры: Если остановившиеся фигуры доходят до верхней границы поля, то останавливаем игру и выводим сообщение 
 			if (document.querySelector(`[posX = "${n}"][posY = "15"]`).classList.contains('set')) {
 				clearInterval(interval);
 				alert(`Игра окончена. Ваши очки: ${score}`);
@@ -397,13 +397,13 @@ function move() {//Описваем движение фигуры
 	}
 }
 
-let interval = setInterval(() => {
+let interval = setInterval(() => {//Цикл игры. Обпеделяем скорость обнослени поля.
 	move();
 }, speed);
 
-let flag = true
+let flag = true;
 
-window.addEventListener('keydown', function (e) {
+window.addEventListener('keydown', function (e) {//Обработка перемещения фигуры по нажатию клавишь
 
 	let coordinates1 = [figureBody[0].getAttribute('posX'), figureBody[0].getAttribute('posY')];
 	let coordinates2 = [figureBody[1].getAttribute('posX'), figureBody[1].getAttribute('posY')];
@@ -414,60 +414,60 @@ window.addEventListener('keydown', function (e) {
 
 		flag = true;
 
-		let figureNew = [
+		let figureNew = [//Берем координаты новой фигуры с необходимым смещением
 		document.querySelector(`[posX = "${+coordinates1[0] + a}"][posY = "${coordinates1[1]}"]`),
 		document.querySelector(`[posX = "${+coordinates2[0] + a}"][posY = "${coordinates2[1]}"]`),
 		document.querySelector(`[posX = "${+coordinates3[0] + a}"][posY = "${coordinates3[1]}"]`),
 		document.querySelector(`[posX = "${+coordinates4[0] + a}"][posY = "${coordinates4[1]}"]`),
 		];
 
-		for (let i = 0; i < figureNew.length; i++) {
+		for (let i = 0; i < figureNew.length; i++) {//Ограничение перемещения. Не перемещаяем фигуру если она находится за границей поля или пересекается с другой фигурой
 			if (!figureNew[i] || figureNew[i].classList.contains('set')) {
 				flag = false;
 			}
 		}
 
-		if (flag == true) {
+		if (flag == true) {//Если проверка на перемещение пройдна
 			for (let i = 0; i < figureBody.length; i++) {//Удаляем у фигуры класс "figure"
 			figureBody[i].classList.remove('figure');
 			}
 
-		figureBody = figureNew; //Присваиваем фигуре новые координаты
+		figureBody = figureNew; //Присваиваем текущей фигуре координаты новой фигуры
 
 			for (let i = 0; i < figureBody.length; i++) {//Добавляем фигуре класс "figure"
 			figureBody[i].classList.add('figure');
 			}
 		}
 	}
-	if (e.keyCode == 37){
-		getNewState (-1);
-	} else if (e.keyCode == 39) {
-		getNewState (1);
-	} else if (e.keyCode == 40){
-		move();
-	} else if (e.keyCode == 38){
+	if (e.keyCode == 37){ //При нажатии на стрелку влево
+		getNewState (-1); //Двигаем фигуру влево
+	} else if (e.keyCode == 39) { //При нажатии на стрелку вправо 
+		getNewState (1); //Двигаем фигуру вправо
+	} else if (e.keyCode == 40){ //При нажатии на стрелку вниз 
+		move(); //Ускоряем падение фигуры
+	} else if (e.keyCode == 38){ //При нажатии на стрелку вверх поворачиваем фигуру
 
 		flag = true;
 
-		let figureNew = [
+		let figureNew = [//Определяем новую фигуру с кооринатами повернутой фигуры
 		document.querySelector(`[posX = "${+coordinates1[0] + mainArr[currentFigure][rotate + 2][0][0]}"][posY = "${+coordinates1[1] + mainArr[currentFigure][rotate + 2][0][1]}"]`),
 		document.querySelector(`[posX = "${+coordinates2[0] + mainArr[currentFigure][rotate + 2][1][0]}"][posY = "${+coordinates2[1] + mainArr[currentFigure][rotate + 2][1][1]}"]`),
 		document.querySelector(`[posX = "${+coordinates3[0] + mainArr[currentFigure][rotate + 2][2][0]}"][posY = "${+coordinates3[1] + mainArr[currentFigure][rotate + 2][2][1]}"]`),
 		document.querySelector(`[posX = "${+coordinates4[0] + mainArr[currentFigure][rotate + 2][3][0]}"][posY = "${+coordinates4[1] + mainArr[currentFigure][rotate + 2][3][1]}"]`),
 		];
 
-		for (let i = 0; i < figureNew.length; i++) {
+		for (let i = 0; i < figureNew.length; i++) { //Проверяем на столкновение с краем поля и другой фигурой
 			if (!figureNew[i] || figureNew[i].classList.contains('set')) {
 				flag = false;
 			}
 		}
 
 		if (flag == true) {
-			for (let i = 0; i < figureBody.length; i++) {//Удаляем у фигуры класс "figure"
+			for (let i = 0; i < figureBody.length; i++) {//Удаляем у текущей фигуры класс "figure"
 			figureBody[i].classList.remove('figure');
 			}
 
-			figureBody = figureNew; //Присваиваем фигуре новые координаты
+			figureBody = figureNew; //Присваиваем текущей фигуре новые координаты
 
 			for (let i = 0; i < figureBody.length; i++) {//Добавляем фигуре класс "figure"
 			figureBody[i].classList.add('figure');
